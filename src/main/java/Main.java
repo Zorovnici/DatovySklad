@@ -13,7 +13,7 @@ public class Main {
 
 
         String mysqlName = "username v mysql";
-        String postrgresName = " username v postgres";
+        String postrgresName =  "username v postgres";
         String passwd = " heslo pre pouzivatelov ja som mal take iste pri mysql aj postgres preto len jedno heslo *";
         Connection hresko_mysqlConnection = DriverManager.getConnection(hresko_urlMysql,mysqlName,passwd);
         Connection kaminska_mysqlConnection = DriverManager.getConnection(kaminska_urlMysql,mysqlName,passwd);
@@ -354,6 +354,48 @@ public class Main {
         System.out.println("Roky");
         System.out.println("Hresko: " + hresko_rokyList.size() +" " + "Kaminska: " +  kaminska_rokyList.size() +" "+ "Kulcsar: " + kulcsar_rokyList.size() +" " + "Sutorcik: " +  sutorcik_rokyList.size() +" "+ "Naša DB: " + nasa_DB_rokyList.size());
 
+
+        //Zaznam has autors
+        ResultSet hresko_resultSet_zaznam_autor = hresko_statement.executeQuery("select * from epcs_authors");
+        ResultSet kaminska_resultSet_zaznam_autor = kaminska_statement.executeQuery("select * from author_publication");
+        ResultSet kulcsar_resultSet_zaznam_autor = kulcsar_statement.executeQuery("select * from autor_dielo_pracovisko");
+        ResultSet sutorcik_resultSet_zaznam_autor = sutorcik_statement.executeQuery("select * from praca_autor_pracovisko");
+        ResultSet nasa_DB_resultSet_zaznam_autor = nasa_DB_statement.executeQuery("select * from zaznam_has_autor");
+
+        ArrayList<ZaznamHasAutor> hresko_zaznam_autor_List = new ArrayList<>();
+        ArrayList<ZaznamHasAutor> kaminska_zaznam_autor_List = new ArrayList<>();
+        ArrayList<ZaznamHasAutor> kulcsar_zaznam_autor_List = new ArrayList<>();
+        ArrayList<ZaznamHasAutor> sutorcik_zaznam_autor_List = new ArrayList<>();
+        ArrayList<ZaznamHasAutor> nasa_DB_zaznam_autor_List = new ArrayList<>();
+
+        ZaznamHasAutor zaznamHasAutor;
+        while (hresko_resultSet_zaznam_autor.next()) {
+            zaznamHasAutor = new ZaznamHasAutor(hresko_resultSet_zaznam_autor.getString("epc_id"), hresko_resultSet_zaznam_autor.getString("author_id"));
+            hresko_zaznam_autor_List.add(zaznamHasAutor);
+        }
+
+        while (kaminska_resultSet_zaznam_autor.next()) {
+            zaznamHasAutor = new ZaznamHasAutor(kaminska_resultSet_zaznam_autor.getString("id_publication"), kaminska_resultSet_zaznam_autor.getString("id_author"));
+            kaminska_zaznam_autor_List.add(zaznamHasAutor);
+        }
+
+        while (kulcsar_resultSet_zaznam_autor.next()) {
+            zaznamHasAutor = new ZaznamHasAutor(kulcsar_resultSet_zaznam_autor.getString("dielo_id"), kulcsar_resultSet_zaznam_autor.getString("autor_id"));
+            kulcsar_zaznam_autor_List.add(zaznamHasAutor);
+        }
+
+        while (sutorcik_resultSet_zaznam_autor.next()) {
+            zaznamHasAutor = new ZaznamHasAutor(sutorcik_resultSet_zaznam_autor.getString("praca_id"), sutorcik_resultSet_zaznam_autor.getString("autor_id"));
+            sutorcik_zaznam_autor_List.add(zaznamHasAutor);
+        }
+
+        while (nasa_DB_resultSet_zaznam_autor.next()) {
+            zaznamHasAutor = new ZaznamHasAutor(nasa_DB_resultSet_zaznam_autor.getString("fkzaznam"), nasa_DB_resultSet_zaznam_autor.getString("fkautor"));
+            nasa_DB_zaznam_autor_List.add(zaznamHasAutor);
+        }
+
+        System.out.println("Zaznam has autor");
+        System.out.println("Hresko: " + hresko_zaznam_autor_List.size() +" " + "Kaminska: " +  kaminska_zaznam_autor_List.size() +" "+ "Kulcsar: " + kulcsar_zaznam_autor_List.size() +" " + "Sutorcik: " +  sutorcik_zaznam_autor_List.size() +" "+ "Naša DB: " + nasa_DB_zaznam_autor_List.size());
 
     }
 }
