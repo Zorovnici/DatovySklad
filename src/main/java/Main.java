@@ -352,7 +352,7 @@ public class Main {
         }
 
         System.out.println("Roky");
-        System.out.println("Hresko: " + hresko_rokyList.size() +" " + "Kaminska: " +  kaminska_rokyList.size() +" "+ "Kulcsar: " + kulcsar_rokyList.size() +" " + "Sutorcik: " +  sutorcik_rokyList.size() +" "+ "Naša DB: " + nasa_DB_rokyList.size());
+        System.out.println("Hresko: " + hresko_rokyList.size() +" " + "Kaminska: " +  kaminska_rokyList.size() +" "+ "Kulcsar: " + kulcsar_rokyList.size() +" " + "Sutorcik: " +  sutorcik_rokyList.size() +" "+ "Naša DB: " + nasa_DB_rokyList.size() + "\n");
 
 
         //Zaznam has autors
@@ -395,7 +395,51 @@ public class Main {
         }
 
         System.out.println("Zaznam has autor");
-        System.out.println("Hresko: " + hresko_zaznam_autor_List.size() +" " + "Kaminska: " +  kaminska_zaznam_autor_List.size() +" "+ "Kulcsar: " + kulcsar_zaznam_autor_List.size() +" " + "Sutorcik: " +  sutorcik_zaznam_autor_List.size() +" "+ "Naša DB: " + nasa_DB_zaznam_autor_List.size());
+        System.out.println("Hresko: " + hresko_zaznam_autor_List.size() +" " + "Kaminska: " +  kaminska_zaznam_autor_List.size() +" "+ "Kulcsar: " + kulcsar_zaznam_autor_List.size() +" " + "Sutorcik: " +  sutorcik_zaznam_autor_List.size() +" "+ "Naša DB: " + nasa_DB_zaznam_autor_List.size() + "\n");
+
+
+        // Zaznam has klucove slova
+        ResultSet hresko_resultSet_zaznam_keyword = hresko_statement.executeQuery("select * from epcs_keywords");
+        ResultSet kaminska_resultSet_zaznam_keyword = kaminska_statement.executeQuery("select * from publication_keyword");
+        ResultSet kulcsar_resultSet_zaznam_keyword = kulcsar_statement.executeQuery("select * from dielo_klucove_slovo");
+        ResultSet sutorcik_resultSet_zaznam_keyword = sutorcik_statement.executeQuery("select * from klucove_slovo");
+        ResultSet nasa_DB_resultSet_zaznam_keyword = nasa_DB_statement.executeQuery("select * from zaznam_has_klucove_slova");
+
+        ArrayList<ZaznamHasKlucoveSlovo> hresko_zaznam_keyword_List = new ArrayList<>();
+        ArrayList<ZaznamHasKlucoveSlovo> kaminska_zaznam_keyword_List = new ArrayList<>();
+        ArrayList<ZaznamHasKlucoveSlovo> kulcsar_zaznam_keyword_List = new ArrayList<>();
+        ArrayList<ZaznamHasKlucoveSlovo> sutorcik_zaznam_keyword_List = new ArrayList<>();
+        ArrayList<ZaznamHasKlucoveSlovo> nasa_DB_zaznam_keyword_List = new ArrayList<>();
+
+        ZaznamHasKlucoveSlovo zaznamHasKlucoveSlovo;
+
+        while (hresko_resultSet_zaznam_keyword.next()) {
+            zaznamHasKlucoveSlovo = new ZaznamHasKlucoveSlovo(hresko_resultSet_zaznam_keyword.getString("epc_id"), hresko_resultSet_zaznam_keyword.getString("keyword_id"));
+            hresko_zaznam_keyword_List.add(zaznamHasKlucoveSlovo);
+        }
+
+        while (kaminska_resultSet_zaznam_keyword.next()) {
+            zaznamHasKlucoveSlovo = new ZaznamHasKlucoveSlovo(kaminska_resultSet_zaznam_keyword.getString("id_publication"), kaminska_resultSet_zaznam_keyword.getString("id_keyword"));
+            kaminska_zaznam_keyword_List.add(zaznamHasKlucoveSlovo);
+        }
+
+        while (kulcsar_resultSet_zaznam_keyword.next()) {
+            zaznamHasKlucoveSlovo = new ZaznamHasKlucoveSlovo(kulcsar_resultSet_zaznam_keyword.getString("dielo_id"), kulcsar_resultSet_zaznam_keyword.getString("klucove_slovo_id"));
+            kulcsar_zaznam_keyword_List.add(zaznamHasKlucoveSlovo);
+        }
+
+        while (sutorcik_resultSet_zaznam_keyword.next()) {
+            zaznamHasKlucoveSlovo = new ZaznamHasKlucoveSlovo(sutorcik_resultSet_zaznam_keyword.getString("praca_id"), sutorcik_resultSet_zaznam_keyword.getString("klucove_slovo"));
+            sutorcik_zaznam_keyword_List.add(zaznamHasKlucoveSlovo);
+        }
+
+        while (nasa_DB_resultSet_zaznam_keyword.next()) {
+            zaznamHasKlucoveSlovo = new ZaznamHasKlucoveSlovo(nasa_DB_resultSet_zaznam_keyword.getString("fkzaznam"), nasa_DB_resultSet_zaznam_keyword.getString("fkklucoveslova"));
+            nasa_DB_zaznam_keyword_List.add(zaznamHasKlucoveSlovo);
+        }
+
+        System.out.println("Zaznam has keyword");
+        System.out.println("Hresko: " + hresko_zaznam_keyword_List.size() +" " + "Kaminska: " +  kaminska_zaznam_keyword_List.size() +" "+ "Kulcsar: " + kulcsar_zaznam_keyword_List.size() +" " + "Sutorcik: " +  sutorcik_zaznam_keyword_List.size() +" "+ "Naša DB: " + nasa_DB_zaznam_keyword_List.size() + "\n");
 
     }
 }
