@@ -2,30 +2,34 @@ import models.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         String hresko_urlMysql = "jdbc:mysql://localhost:3306/hresko?allowPublicKeyRetrieval=true&serverTimezone=UTC";
         String kaminska_urlMysql = "jdbc:mysql://localhost:3306/kaminska?allowPublicKeyRetrieval=true&serverTimezone=UTC";
         String kulcsar_urlMysql = "jdbc:mysql://localhost:3306/fberg_lf?allowPublicKeyRetrieval=true&serverTimezone=UTC";
-        String sutorcik_urlPostgresql = "jdbc:postgresql://localhost:5432/postgres";
-        String nasa_DB = "jdbc:mysql://localhost:3306/mydb?allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        String sutorcik_urlPostgresql = "jdbc:postgresql://127.0.0.1:5432/postgres";
+        String nasa_DB = "jdbc:mysql://localhost:3306/tssu?allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        String starSchemaMysql = "jdbc:mysql://localhost:3306/starschema?allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
-
-        String mysqlName = "username v mysql";
-        String postrgresName = " username v postgres";
-        String passwd = " heslo pre pouzivatelov ja som mal take iste pri mysql aj postgres preto len jedno heslo *";
+        String mysqlName = "root";
+        String postrgresName = "postgres";
+        String passwd = "teamcity";
         Connection hresko_mysqlConnection = DriverManager.getConnection(hresko_urlMysql,mysqlName,passwd);
         Connection kaminska_mysqlConnection = DriverManager.getConnection(kaminska_urlMysql,mysqlName,passwd);
         Connection kulcsar_mysqlConnection = DriverManager.getConnection(kulcsar_urlMysql,mysqlName,passwd);
         Connection sutorcik_postgreConnection = DriverManager.getConnection(sutorcik_urlPostgresql,postrgresName,passwd); //keby maš ine heslo tak ho daj tu kde je postres *
         Connection nasa_DBConnection = DriverManager.getConnection(nasa_DB,mysqlName,passwd);
+        Connection starSchemaConnection = DriverManager.getConnection(starSchemaMysql, mysqlName, passwd);
 
         Statement hresko_statement = hresko_mysqlConnection.createStatement();
         Statement kaminska_statement = kaminska_mysqlConnection.createStatement();
         Statement kulcsar_statement = kulcsar_mysqlConnection.createStatement();
         Statement sutorcik_statement = sutorcik_postgreConnection.createStatement();
         Statement nasa_DB_statement = nasa_DBConnection.createStatement();
+        Statement starSchema_statement = starSchemaConnection.createStatement();
 
         //Select autorov
         ResultSet hresko_resultSet_autor = hresko_statement.executeQuery("select * from authors");
@@ -354,6 +358,91 @@ public class Main {
         System.out.println("Roky");
         System.out.println("Hresko: " + hresko_rokyList.size() +" " + "Kaminska: " +  kaminska_rokyList.size() +" "+ "Kulcsar: " + kulcsar_rokyList.size() +" " + "Sutorcik: " +  sutorcik_rokyList.size() +" "+ "Naša DB: " + nasa_DB_rokyList.size());
 
+        /*for (Autor a : kulcsar_autorList){
+            System.out.println(a.getFirstname());
+            System.out.println(a.getFirstname() == null);
+        }*/
 
+       /* List<List<Autor>> autorList= Arrays.asList(hresko_autorList,kaminska_autorList,nasa_DB_autorList,sutorcik_autorList,kulcsar_autorList);
+
+        for (List<Autor> al : autorList)
+        autorAdd(al, starSchema_statement);
+
+        System.out.println();
+        System.out.println(hresko_autorList.size()+kaminska_autorList.size()+nasa_DB_autorList.size()+sutorcik_autorList.size()+kulcsar_autorList.size());
+
+        List<List<Keyword>> keywordList= Arrays.asList(hresko_keywordList,kaminska_keywordList,nasa_DB_keywordList,sutorcik_keywordList,kulcsar_keywordList);
+
+        for (List<Keyword> kl : keywordList)
+        keywordsAdd(kl, starSchema_statement);
+
+
+        System.out.println();
+        System.out.println(hresko_keywordList.size()+kaminska_keywordList.size()+nasa_DB_keywordList.size()+sutorcik_keywordList.size()+kulcsar_keywordList.size());
+*/
+        List<List<Zaznam>> zaznamList= Arrays.asList(hresko_zaznamList,kaminska_zaznamList,nasa_DB_zaznamList,sutorcik_zaznamList,kulcsar_zaznamList);
+
+        for (List<Zaznam> zl : zaznamList)
+            stranyAdd(zl, starSchema_statement);
+
+        for (List<Zaznam> zl : zaznamList)
+            zaznamAdd(zl, starSchema_statement);
+
+        System.out.println();
+        System.out.println(hresko_zaznamList.size()+kaminska_zaznamList.size()+nasa_DB_zaznamList.size()+sutorcik_zaznamList.size()+kulcsar_zaznamList.size());
+
+    }
+
+    private static void keywordsAdd(List<Keyword> list, Statement statements) throws SQLException {
+        for (Keyword k : list){
+            String name;
+            name = (k.getName() == null) ? "" : k.getName();
+
+            name= name.replaceAll("'","''");
+            name= name.replaceAll("\\\\","");
+
+            String sql = "INSERT INTO Klucove_slova(kluc_slova) " +
+                    "VALUES ('"+name+"')";
+            statements.executeUpdate(sql);
+        }
+    }
+
+    private static void autorAdd(List<Autor> list, Statement statement) throws SQLException {
+        for (Autor a : list){
+            String firstName, lastName;
+            firstName = (a.getFirstname() == null) ? "" : a.getFirstname();
+            lastName = (a.getSurname() == null) ? "" : a.getSurname();
+
+            firstName = firstName.replaceAll("'","''");
+            lastName = lastName.replaceAll("'","''");
+
+            String sql = "INSERT INTO Autor(Meno,Priezvisko) " +
+                    "VALUES ('" + firstName + "','" + lastName + "')";
+            statement.executeUpdate(sql);
+        }
+    }
+
+    private static void stranyAdd(List<Zaznam> list, Statement statement) throws SQLException {
+        for (Zaznam z : list){
+            String strany;
+            strany = (z.getStrany() == null) ? "" : z.getStrany();
+
+            String sql = "INSERT INTO Pocet_Stran(pocet_stran) " +
+                    "VALUES ('"+strany+"')";
+            statement.executeUpdate(sql);
+        }
+    }
+
+    private static void zaznamAdd(List<Zaznam> list, Statement statement) throws SQLException {
+        for (Zaznam z : list){
+            String nazov;
+            nazov = (z.getName() == null) ? "" : z.getName();
+
+            nazov = nazov.replaceAll("'","''");
+
+            String sql = "INSERT INTO zaznam(arch_cislo,nazov,katepc,ISBN,ISSN) " +
+                    "VALUES ('"+z.getArch_cislo()+"','"+nazov+"','"+z.getKat_epc()+"','"+z.getISBN()+"','"+z.getISSN()+"')";
+            statement.executeUpdate(sql);
+        }
     }
 }
