@@ -18,7 +18,7 @@ public class Main {
         String kulcsar_urlMysql = "jdbc:mysql://localhost:3306/fberg_lf?allowPublicKeyRetrieval=true&serverTimezone=UTC";
         String sutorcik_urlPostgresql = "jdbc:postgresql://127.0.0.1:5432/postgres";
         String nasa_DB = "jdbc:mysql://localhost:3306/tssu?allowPublicKeyRetrieval=true&serverTimezone=UTC";
-        String starSchemaMysql = "jdbc:mysql://localhost:3306/starschema?allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        String starSchemaMysql = "jdbc:mysql://localhost:3306/newstarschema?allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
 
         String mysqlName = "root";
@@ -538,8 +538,21 @@ public class Main {
         System.out.println(zaznamList.size());
         System.out.println(oldIdAutor.size() + " - " + newIdAutor.size());
         System.out.println(oldIdZaznam.size() + " - " + newIdZaznam.size());
+
 */
 
+     //   getMapAutor(starSchema_statement);
+        getMapZaznam(starSchema_statement);
+        Iterator<String> i1 = oldIdZaznam.iterator();
+        Iterator<String> i2 = newIdZaznam.iterator();
+        while (i1.hasNext() && i2.hasNext()){
+            String old = i1.next();
+            String neww = i2.next();
+
+            String sql = "UPDATE pocet_stran SET newId="+neww+" WHERE idKaminska="+old+";";
+            System.out.println(sql);
+            starSchema_statement.executeUpdate(sql);
+        }
     }
 
     private static void keywordsAdd(List<Keyword> list, Statement statements) throws SQLException {
@@ -604,7 +617,7 @@ public class Main {
     }
 
     private static void getMapZaznam(Statement statement) throws SQLException {
-        ResultSet nasa_DB_resultSet_zaznam = statement.executeQuery("select * from Zaznam WHERE idHresko IS NOT NULL");
+        ResultSet nasa_DB_resultSet_zaznam = statement.executeQuery("select * from Zaznam WHERE idKaminska IS NOT NULL");
 
         //Map<String, String> nasa_DB_zaznamList = new HashMap<>();
 
@@ -614,7 +627,7 @@ public class Main {
         while (nasa_DB_resultSet_zaznam.next()) {
             //zaznam = new Zaznam(nasa_DB_resultSet_zaznam.getString("idZaznam"), nasa_DB_resultSet_zaznam.getString("Nazov"), nasa_DB_resultSet_zaznam.getString("arch_cislo"), nasa_DB_resultSet_zaznam.getString("fkkat_epc"), nasa_DB_resultSet_zaznam.getString("ISSN"), nasa_DB_resultSet_zaznam.getString("ISBN"), nasa_DB_resultSet_zaznam.getString("pocet_stran"));
            // nasa_DB_zaznamList.put(nasa_DB_resultSet_zaznam.getString("idNasa"),nasa_DB_resultSet_zaznam.getString("idZaznam"));
-            oldIdZaznam.add(nasa_DB_resultSet_zaznam.getString("idHresko"));
+            oldIdZaznam.add(nasa_DB_resultSet_zaznam.getString("idKaminska"));
             newIdZaznam.add(nasa_DB_resultSet_zaznam.getString("idZaznam"));
         }
 
