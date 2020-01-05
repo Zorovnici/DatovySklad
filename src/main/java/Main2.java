@@ -1,5 +1,4 @@
-import models.Autor;
-import models.Zaznam;
+
 
 import java.sql.*;
 import java.util.*;
@@ -13,13 +12,12 @@ public class Main2 {
         List<String> pocetStran = new ArrayList<>();
 
         String mysqlName = "root";
-        String postrgresName = "postgres";
         String passwd = "teamcity";
         Connection starSchemaConnection = DriverManager.getConnection(starSchemaMysql, mysqlName, passwd);
 
         Statement starSchema_statement = starSchemaConnection.createStatement();
 
-        ResultSet nasa_DB_resultSet_zaznam = starSchema_statement.executeQuery("select * from pocet_stran");
+        /*ResultSet nasa_DB_resultSet_zaznam = starSchema_statement.executeQuery("select * from pocet_stran");
 
         while (nasa_DB_resultSet_zaznam.next()) {
             idPocetStran.add(nasa_DB_resultSet_zaznam.getString("idPocetStran"));
@@ -90,6 +88,29 @@ public class Main2 {
             starSchema_statement.executeUpdate(sql);
 
         }
+*/
+       // Multimap<String, String> map = ArrayListMultimap.create();
+        //Map<String, String> map = new HashMap<>();
+        List<String> idZaz = new ArrayList<>();
+        List<String> count = new ArrayList<>();
+        ResultSet nasa_DB_resultSet_zaznam = starSchema_statement.executeQuery("select idZaznam,COUNT(idKey) from zaznam_key GROUP BY idZaznam ORDER BY idZaznam");
+
+        while (nasa_DB_resultSet_zaznam.next()){
+            idZaz.add(nasa_DB_resultSet_zaznam.getString(1));
+            count.add(nasa_DB_resultSet_zaznam.getString(2));
+        }
+
+        Iterator<String> itzaz = idZaz.iterator();
+        Iterator<String> itcount = count.iterator();
+        while (itzaz.hasNext() & itcount.hasNext()){
+            String sql = "UPDATE faktova_tabulka SET pocetKlucovychSlov="+itcount.next()+" WHERE idZaznam="+itzaz.next();
+            System.out.println(sql);
+            starSchema_statement.executeUpdate(sql);
+        }
+
+
+
+
 
 
     }
